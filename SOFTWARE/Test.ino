@@ -79,6 +79,10 @@ void PyroContinuityTest() {
 }
 
 void CheckPyro() {
+  if(!pyroArmed) {
+    Serial.println("PYRO BLOCKED - NOT ARMED");
+    return;
+  }
   Serial.println("STARTING PYROTECHNIC TESTS");
   delay(3000);
   digitalWrite(PyroChnl1, HIGH); Serial.println("PYRO CHANNEL 1 IS HIGH MAKE SURE IGNITOR IS NOT CONNECTED");
@@ -101,14 +105,15 @@ void CheckPyro() {
 void handleTest(){
 
     Serial.println("CURRENT STATE IS TESTING I AM BEGINNING THE TESTING PROCEDURE");
-    currentStateNo = 8;
+    currentState = stateTest;
+    pyroArmed = true;
     CheckPyro();
     delay(3000);
     CheckSensors();
     delay(3000);
     Serial.println("TEST IS FINISHED. PLEASE TURN OFF THE TEST SWITCH. TO TEST AGAIN PLEASE TURN IT BACK ON.");
     delay(5000);
-    currentStateNo = 1;
+    currentState = stateCalibration;
   
 }
 void errorWarn(){
