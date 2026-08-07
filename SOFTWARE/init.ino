@@ -4,7 +4,7 @@ void initSensors(){
     delay(1000);
   }
 
-  while (!BARO.begin_SPI(9)) {
+  while (!BARO.begin_SPI(baroCsPin)) {
     Serial.println("Barometer communication has not been established");
     delay(1000);
   }
@@ -13,16 +13,27 @@ void initSensors(){
   BARO.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_3);
 
 }
-void initActuators(){
+void PyroInit() {
+
   pinMode(PyroChnl1, OUTPUT);
   pinMode(PyroChnl2, OUTPUT);
   pinMode(PyroChnl3, OUTPUT);
   pinMode(PyroChnl4, OUTPUT);
+
+  // Always start safe
   digitalWrite(PyroChnl1, LOW);
   digitalWrite(PyroChnl2, LOW);
   digitalWrite(PyroChnl3, LOW);
   digitalWrite(PyroChnl4, LOW);
 
+
+  pinMode(PyroCont1, INPUT);
+  pinMode(PyroCont2, INPUT);
+  pinMode(PyroCont3, INPUT);
+  pinMode(PyroCont4, INPUT);
+}
+void initActuators(){
+  PyroInit();
   // Servo attaches
   servoFin1.attach(FinServo1);
   servoFin2.attach(FinServo2);
@@ -31,8 +42,14 @@ void initActuators(){
 
 }
 void initPins(){
-  pinMode(27, INPUT); // ARM switch
-  pinMode(26, INPUT); // Test switch
+  pinMode(armPin, INPUT); // ARM switch
+  pinMode(testPin, INPUT); // Test switch
+  pinMode(BATT_PIN, INPUT);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(ledPin, OUTPUT);
+  FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.setBrightness(50);
+
 }
 
 void initialize(){

@@ -1,20 +1,36 @@
+#include <FastLED.h>
+#include <stm32duino.h>
 #include <SPI.h>
 #include <ICM42688.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP3XX.h>
 #include <math.h>
 #include <Servo.h>
-#include <Arduino.h>
-#define FLASH_CS_PIN 11
-#define PyroChnl1 22 
-#define PyroChnl2 23 
-#define PyroChnl3 24 
-#define PyroChnl4 25 
 
-#define FinServo1 2
-#define FinServo2 3
-#define FinServo3 4
-#define FinServo4 5           
+#define PyroChnl1 PB5
+#define PyroChnl2 PB6 
+#define PyroChnl3 PB7 
+#define PyroChnl4 PB8 
+
+#define PyroCont1 PB12
+#define PyroCont2 PB13
+#define PyroCont3 PB14
+#define PyroCont4 PB15
+
+#define FinServo1 PA0
+#define FinServo2 PA1
+#define FinServo3 PA2
+#define FinServo4 PA3           
+#define armPin PA11
+#define testPin PA12
+#define baroCsPin PA8
+#define imuCsPin PA9
+#define flashCsPin PA10
+#define BATT_PIN PA7
+#define buzzerPin PB9
+#define ledPin PB0
+#define NUM_LEDS 1
+CRGB leds[NUM_LEDS];
 
 struct IMUData {
   float ax, ay, az, gx, gy, gz;
@@ -66,12 +82,12 @@ flightState currentState = stateIdle;
 
 //OBJECTs
 Adafruit_BMP3XX BARO;
-ICM42688 IMU(SPI, 10);
+ICM42688 IMU(SPI, 11);
 Servo servoFin1;
 Servo servoFin2;
 Servo servoFin3;
 Servo servoFin4;
-SPIFlash flash(FLASH_CS_PIN);
+SPIFlash flash(flashCsPin);
 
 // Global state variables
   //Time
@@ -94,12 +110,12 @@ SPIFlash flash(FLASH_CS_PIN);
     float previousAltitude = 0.0f;
   //Pyro
     int CurrPyroChnl = 0;
+    bool pyroArmed = false;
   //Constants
     const float alpha = 0.98f;
     const float RADtoDEG = 57.2957795f;
   //battery
     const float BATT_DIV_RATIO = 4.0f;
-    const uint8_t BATT_PIN = PA0;
     uint16_t battADC = 0;
     //target
     float targetPitch = 0;
@@ -121,9 +137,9 @@ void setup() {
 void loop() {
 
   checkPyroState();
-  bool Test = digitalRead(26);
+  bool Test = digitalRead(testPin);
 
-  if (digitalRead(27) && currentState == stateCalibration) {
+  if (digitalRead(armPin) && (currentState == stateCalibration || currentState == stateTest) && pyroArmed) {
     Serial.println("ARMED");
     currentState = stateArmed;
   } 

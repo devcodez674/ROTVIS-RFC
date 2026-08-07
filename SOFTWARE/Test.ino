@@ -15,6 +15,9 @@ void CheckSensors() {
 
   if (!BARO.performReading()) {
     Serial.println("Failed to read BMP388");
+    errorWarn();
+    delay(2000);
+    errorClear();
     return;
   }
 
@@ -30,6 +33,51 @@ void CheckSensors() {
   int BatteryRaw = analogRead(A0);
   Serial.print("Battery Raw ADC: "); Serial.println(BatteryRaw);
 }
+void PyroContinuityTest() {
+
+  Serial.println("---- PYRO CONTINUITY TEST ----");
+
+
+  if(CheckPyroContinuity(1))
+    Serial.println("PYRO 1: OK");
+  else{
+    Serial.println("PYRO 1: OPEN");
+    errorWarn();
+    delay(2000);
+    errorClear();
+  }
+
+
+  if(CheckPyroContinuity(2))
+    Serial.println("PYRO 2: OK");
+  else{
+    Serial.println("PYRO 2: OPEN");
+    errorWarn();
+    delay(2000);
+    errorClear();
+  }
+
+
+  if(CheckPyroContinuity(3))
+    Serial.println("PYRO 3: OK");
+  else{
+    Serial.println("PYRO 3: OPEN");
+    errorWarn();
+    delay(2000);
+    errorClear();
+  }
+
+
+  if(CheckPyroContinuity(4))
+    Serial.println("PYRO 4: OK");
+  else{
+    Serial.println("PYRO 4: OPEN");
+    errorWarn();
+    delay(2000);
+    errorClear();
+  }
+}
+
 void CheckPyro() {
   Serial.println("STARTING PYROTECHNIC TESTS");
   delay(3000);
@@ -62,4 +110,12 @@ void handleTest(){
     delay(5000);
     currentStateNo = 1;
   
+}
+void errorWarn(){
+  digitalWrite(buzzerPin, HIGH);
+  FastLED.showColor(CRGB::Red);
+}
+void errorClear(){
+  digitalWrite(buzzerPin, LOW);
+  FastLED.showColor(CRGB::Black);
 }

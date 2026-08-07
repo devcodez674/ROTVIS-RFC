@@ -35,6 +35,9 @@ void handleArmed() {
   findBattVoltage();
   if (estimatedData.BatteryVoltage < 3.0f){
     currentState = stateIdle;
+    errorWarn();
+    delay(10000);
+    errorClear();
   }
     runEvery(lastIMURead, 5, readIMU);
     // Launch detection — ay spike above 25g for at least 50ms
@@ -48,9 +51,6 @@ void handleArmed() {
 
 // renamed from stateAscent() to handleAscent() to avoid conflict with enum value stateAscent
 void handleAscent() {
-
-
-
   runEvery(lastIMURead, 5, readIMU);
   runEvery(lastBaroRead, 10, readBaro);
   runEvery(lastLogTime, 10, updateLog);
@@ -61,7 +61,9 @@ void handleCalibration() {
   runEvery(lastBaroRead, 10, readBaro);
 }
 void handleCoast(){
-  handleAscent();
+  runEvery(lastIMURead, 5, readIMU);
+  runEvery(lastBaroRead, 10, readBaro);
+  runEvery(lastLogTime, 10, updateLog);
   
 }
 void handleApogee() {
@@ -71,4 +73,12 @@ void handleApogee() {
       if (now - parachuteCounter >= 500)
         cutPyro(1);
   currentState = stateDescent;
+}
+void handleDescent(){
+  handleCoast();
+  
+}
+void handleLanded(){
+digitalWrite(buzzerPin, HIGH);
+
 }

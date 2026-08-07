@@ -2,7 +2,7 @@ void readBaro(){
     baroData.altitude = BARO.readAltitude(SeaLevelPressure_HPA);
     baroData.pressure = BARO.pressure / 100.0f; // in hPa
     baroData.temperature = BARO.temperature;
-    EestimateVerticalVelocity(EstimatedData.altitude, dt);
+    estimateVerticalVelocity(EstimatedData.altitude, dt);
 }
 
 void estimateVerticalVelocity(float altitude, float dt)

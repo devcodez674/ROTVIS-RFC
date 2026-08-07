@@ -1,4 +1,4 @@
-void WriteServos(int angle, int num){
+void WriteServos(uint8_t angle, uint8_t num){
   angle = constrain(angle, 70, 110);
   servoAngle[num] = angle;
   switch(num){
