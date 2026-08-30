@@ -1,4 +1,4 @@
-{
+dd{
   "board": {
     "3dviewports": [],
     "design_settings": {
@@ -526,7 +526,7 @@
       "netlist": "",
       "plot": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "RFC.stl",
       "vrml": ""
     },
     "page_layout_descr_file": ""
